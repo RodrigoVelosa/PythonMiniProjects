@@ -41,7 +41,7 @@ def post_chat_completions():
         "stream": False
     }
 
-    response = requests.post(endpoint, payload)
+    response = requests.post(endpoint, json=payload)
 
     if response.status_code != 200:
         print("Fail :(")
