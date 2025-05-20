@@ -1,11 +1,13 @@
 import requests
 import sys
+import re
 
 BASE_URL = 'http://127.0.0.1:1234/'
 
 def post_chat_completions():
     endpoint = BASE_URL + 'v1/chat/completions'
 
+    question = input("Entao?\n")
     payload = {
         "model": "deepseek-r1-distill-qwen-7b",
         "messages": [
@@ -15,29 +17,29 @@ def post_chat_completions():
             },
             {
                 "role": "user",
-                "content": "Tell me a joke."
+                "content": question
             }
         ],
-        "response_format": {
-            "type": "json_schema",
-            "json_schema": {
-                "name": "joke_response",
-                "strict": "true",
-                "schema": {
-                    "type": "object",
-                    "properties": {
-                        "joke": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "joke"
-                    ]
-                }
-            }
-        },
+        # "response_format": {
+        #     "type": "json_schema",
+        #     "json_schema": {
+        #         "name": "joke_response",
+        #         "strict": "true",
+        #         "schema": {
+        #             "type": "object",
+        #             "properties": {
+        #                 "joke": {
+        #                     "type": "string"
+        #                 }
+        #             },
+        #             "required": [
+        #                 "joke"
+        #             ]
+        #         }
+        #     }
+        # },
         "temperature": 0.7,
-        "max_tokens": 50,
+        "max_tokens": -1,
         "stream": False
     }
 
@@ -49,6 +51,7 @@ def post_chat_completions():
     
     generated_response = response.json()
     answer = generated_response.get("choices")[0].get("message").get("content")
+    filtered_answer = re.sub(r"<think>.*</think>", "", answer, flags=re.DOTALL).strip()
 
     print(answer)
 
@@ -63,5 +66,6 @@ def get_models():
 
     generated_response = response.json()
     print(generated_response)
+
 
 post_chat_completions()
