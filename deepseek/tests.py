@@ -13,21 +13,13 @@ def post_chat_completions():
 def deepseek_question(questions):
     endpoint = BASE_URL + 'v1/chat/completions'
 
-    messages = [
-        {
-            "role": "system",
-            "content": "You are arrogant and like to insult everyone"
-        }
-    ]
+    messages = []
 
     if isinstance(questions, str):
         questions = [questions]
 
     for question in questions:
-        messages += [{
-            "role": "user",
-            "content": question
-        }]
+        messages.append({"role": "user", "content": question})
 
     payload = {
         "model": "deepseek-r1-distill-qwen-7b",
@@ -47,7 +39,7 @@ def deepseek_question(questions):
     answer = generated_response.get("choices")[0].get("message").get("content")
     filtered_answer = re.sub(r"<think>.*</think>", "", answer, flags=re.DOTALL).strip()
 
-    print(answer)
+    print(filtered_answer)
 
 def get_models():
     endpoint = BASE_URL + 'v1/models'
@@ -71,7 +63,14 @@ def health_metrics():
     deepseek_question(question)
 
 def chatbot():
+    allquestions = []
     while True:
-        pass
+        currQuestion = input("").strip()
 
-post_chat_completions()
+        if currQuestion.lower() in ['exit', 'quit']:
+            break
+
+        allquestions.append(currQuestion)
+        deepseek_question(allquestions)
+
+chatbot()
