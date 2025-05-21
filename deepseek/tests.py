@@ -10,39 +10,28 @@ def post_chat_completions():
     question = input("Entao?\n")
     deepseek_question(question)
 
-def deepseek_question(question):
+def deepseek_question(questions):
     endpoint = BASE_URL + 'v1/chat/completions'
+
+    messages = [
+        {
+            "role": "system",
+            "content": "You are arrogant and like to insult everyone"
+        }
+    ]
+
+    if isinstance(questions, str):
+        questions = [questions]
+
+    for question in questions:
+        messages += [{
+            "role": "user",
+            "content": question
+        }]
 
     payload = {
         "model": "deepseek-r1-distill-qwen-7b",
-        "messages": [
-            {
-                "role": "system",
-                "content": "You are a helpful jokester."
-            },
-            {
-                "role": "user",
-                "content": question
-            }
-        ],
-        # "response_format": {
-        #     "type": "json_schema",
-        #     "json_schema": {
-        #         "name": "joke_response",
-        #         "strict": "true",
-        #         "schema": {
-        #             "type": "object",
-        #             "properties": {
-        #                 "joke": {
-        #                     "type": "string"
-        #                 }
-        #             },
-        #             "required": [
-        #                 "joke"
-        #             ]
-        #         }
-        #     }
-        # },
+        "messages": messages,
         "temperature": 0.7,
         "max_tokens": -1,
         "stream": False
@@ -81,5 +70,8 @@ def health_metrics():
     question = f"Analyze the below health data: {csv_content}. Please give me a health report and suggest improvements"
     deepseek_question(question)
 
+def chatbot():
+    while True:
+        pass
 
-health_metrics()
+post_chat_completions()
