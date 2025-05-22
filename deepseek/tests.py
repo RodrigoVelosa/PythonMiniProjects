@@ -24,7 +24,7 @@ def deepseek_question(questions):
     payload = {
         "model": "deepseek-r1-distill-qwen-7b",
         "messages": messages,
-        "temperature": 0.7,
+        "temperature": 0.1 ,
         "max_tokens": -1,
         "stream": False
     }
@@ -40,6 +40,7 @@ def deepseek_question(questions):
     filtered_answer = re.sub(r"<think>.*</think>", "", answer, flags=re.DOTALL).strip()
 
     print(filtered_answer)
+    return filtered_answer
 
 def get_models():
     endpoint = BASE_URL + 'v1/models'
@@ -73,4 +74,14 @@ def chatbot():
         allquestions.append(currQuestion)
         deepseek_question(allquestions)
 
-chatbot()
+def app_idea():
+    app_idea = input("App idea\n").strip()
+
+    question = f"Give me a project charter in markdown based on the following app idea: {app_idea}"
+
+    project_charter_text = deepseek_question(question)
+
+    with open("project_charter.md", "w", encoding='utf-8') as file:
+        file.write(project_charter_text)
+
+app_idea()
